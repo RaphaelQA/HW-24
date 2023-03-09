@@ -1,6 +1,11 @@
 import os
+from typing import Union, Iterable
 
-from flask import Flask
+from flask import Flask, request, jsonify, Response
+from marshmallow import ValidationError
+
+from bulider import build_query
+from models import RequestSchema
 
 app = Flask(__name__)
 
@@ -9,8 +14,22 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 @app.post("/perform_query")
-def perform_query():
-    # нужно взять код из предыдущего ДЗ
-    # добавить команду regex
-    # добавить типизацию в проект, чтобы проходила утилиту mypy app.py
-    return app.response_class('', content_type="text/plain")
+def perform_query() -> Union[Response, tuple[Response, int]]:
+    data = request.json
+    try:
+        RequestSchema().load(data)
+    except ValidationError as error:
+        return jsonify(error.messages), 400
+    first_result: Iterable[str] = build_query(
+        cmd=data['cmd1'],
+        value=data['value1'],
+        file_name=data['file_name'],
+        data=None
+    )
+    second_result: Iterable[str] = build_query(
+        cmd=data['cmd1'],
+        value=data['value1'],
+        file_name=data['file_name'],
+        data=first_result
+    )
+    return jsonify(second_result)

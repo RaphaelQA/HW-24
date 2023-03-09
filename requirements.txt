@@ -1,0 +1,4 @@
+Flask~=2.2.3
+marshmallow~=3.19.0
+mypy=1.1.1
+types-Flask=1.1.6
