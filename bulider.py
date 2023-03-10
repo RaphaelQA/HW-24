@@ -1,4 +1,4 @@
-from typing import Callable, Dict
+from typing import Callable, Dict, Optional
 from function import *
 
 CMD_TO_FUNCTIONS: Dict[str, Callable] = {
@@ -17,7 +17,7 @@ def read_file(file_name: str) -> Iterable[str]:
             yield line
 
 
-def build_query(cmd: str, value: str, file_name: str, data: Iterable[str]) -> list[str]:
+def build_query(cmd: str, value: str, file_name: str, data: Optional[Any]) -> list[str]:
     if data is None:
         prepared_data: Iterable[str] = read_file(file_name)
     else:

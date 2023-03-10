@@ -1,5 +1,5 @@
 import os
-from typing import Union, Iterable
+from typing import Union, Iterable, Tuple, Any
 
 from flask import Flask, request, jsonify, Response
 from marshmallow import ValidationError
@@ -14,8 +14,8 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 @app.post("/perform_query")
-def perform_query() -> Union[Response, tuple[Response, int]]:
-    data = request.json
+def perform_query() -> Tuple[Response, int]:
+    data: Any = request.json
     try:
         RequestSchema().load(data)
     except ValidationError as error:
@@ -32,4 +32,4 @@ def perform_query() -> Union[Response, tuple[Response, int]]:
         file_name=data['file_name'],
         data=first_result
     )
-    return jsonify(second_result)
+    return jsonify(second_result), 200
